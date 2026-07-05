@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@theme {
+  --color-primary: #0F766E;
+  --color-secondary: #14B8A6;
+  --color-tertiary: #0F766E;
+  --color-error: #DC2626;
+  --color-surface: #FFFFFF;
+  --color-background: #F8FAFC;
+  --color-outline: #E5E7EB;
+
+  --color-on-primary: #FFFFFF;
+  --color-on-secondary: #FFFFFF;
+  --color-on-tertiary: #FFFFFF;
+  --color-on-error: #FFFFFF;
+  --color-on-surface: #1F2937;
+  --color-on-background: #1F2937;
+
+  --color-primary-container: #ccfbf1;
+  --color-on-primary-container: #115e59;
+  --color-error-container: #FEE2E2;
+  --color-on-error-container: #991B1B;
+  --color-surface-variant: #f1f5f9;
+  --color-on-surface-variant: #6B7280;
+
+  --font-sans: 'Inter', Roboto, 'Segoe UI', sans-serif;
+
+  --spacing-margin-mobile: 16px;
+  --spacing-gutter: 12px;
+  --spacing-touch-target-min: 56px;
+  --spacing-baseline: 8px;
+  --spacing-input-height: 64px;
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    color: var(--color-primary);
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--color-primary) !important;
+    --tw-ring-color: var(--color-primary) !important;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .custom-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+body {
+  min-height: max(884px, 100dvh);
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-sans);
+}
