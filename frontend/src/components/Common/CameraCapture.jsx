@@ -1,29 +1,29 @@
 import React, { useRef } from 'react';
+import { Camera } from 'lucide-react';
 
 const CameraCapture = ({ onCapture, hasImage }) => {
   const fileInputRef = useRef(null);
 
   return (
     <div className="py-2">
-      <button 
+      <button
         type="button"
         onClick={() => fileInputRef.current.click()}
-        className="w-full aspect-video rounded-xl bg-[#FFFFFF] border-2 border-dashed border-[#E5E7EB] flex flex-col items-center justify-center gap-2 active:scale-95 transition-all group overflow-hidden relative shadow-sm"
+        className="w-full aspect-video rounded-[18px] bg-[#FFFFFF] border-2 border-dashed border-[#DCD7D2] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all overflow-hidden relative"
       >
-        <div className="absolute inset-0 bg-[#0F766E] opacity-0 group-hover:opacity-5 transition-opacity"></div>
         {hasImage ? (
-          <span className="font-label-lg text-[#0F766E]">Image Captured ✓</span>
+          <span className="font-bold text-[15px] text-[#B3122A]">Image Captured ✓</span>
         ) : (
           <>
-            <span className="material-symbols-outlined text-[48px] text-[#0F766E]" data-icon="photo_camera">photo_camera</span>
-            <span className="font-label-lg text-label-lg text-[#6B7280]">Capture Aadhaar Card</span>
+            <Camera size={26} strokeWidth={2} className="text-[#B3122A]" />
+            <span className="text-[15px] text-[#6B6B70]">Capture Aadhaar Card</span>
           </>
         )}
-        <input 
+        <input
           ref={fileInputRef}
-          accept="image/*" 
-          capture="environment" 
-          className="hidden" 
+          accept="image/*"
+          capture="environment"
+          className="hidden"
           type="file"
           onChange={onCapture}
         />

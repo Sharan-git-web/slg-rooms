@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { bookingService } from '../services/bookingService';
+import { Search, LogIn, ArrowRight, Trash2, Eye, CalendarX2, Loader2 } from 'lucide-react';
 
 const Records = () => {
   const [activeFilter, setActiveFilter] = useState('Today');
@@ -85,31 +86,33 @@ const Records = () => {
   };
 
   return (
-    <div className="font-sans min-h-screen bg-[#F8FAFC]">
-      <div className="p-3 pb-20">
+    <div className="min-h-screen">
+      <div className="pt-5 pb-4">
         {/* Search Bar */}
-        <div className="bg-white h-[44px] rounded-[10px] flex items-center px-3 gap-2 mb-3 border border-[#E5E7EB] focus-within:border-[#0F766E] shadow-sm">
-          <span className="material-symbols-outlined text-[#9CA3AF] text-[18px]">search</span>
-          <input 
-            type="text" 
+        <div className="bg-white h-[50px] rounded-full flex items-center px-[18px] gap-2.5 mb-3.5 border border-[#EFEBE8] focus-within:border-[#B3122A]">
+          <Search size={18} className="text-[#B3122A]" />
+          <input
+            type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by Room No. or Aadhaar" 
-            className="bg-transparent border-none w-full h-full text-[13px] focus:ring-0 p-0 placeholder:text-[#9CA3AF] text-[#1F2937] outline-none"
+            placeholder="Search by Room No. or Aadhaar"
+            className="bg-transparent border-none w-full h-full text-[15px] focus:ring-0 p-0 placeholder:text-[#B0ACA8] text-[#1B1B1F] outline-none"
           />
         </div>
 
         {/* Tabs (Active / Deleted) */}
-        <div className="flex bg-white p-0.5 rounded-[8px] mb-3 border border-[#E5E7EB] shadow-sm">
-          <button 
+        <div className="flex bg-white p-1 rounded-full mb-3.5 border border-[#EFEBE8]">
+          <button
             onClick={() => setViewDeleted(false)}
-            className={`flex-1 h-[36px] text-[13px] font-semibold rounded-[6px] transition-all ${!viewDeleted ? 'bg-[#0F766E] text-white' : 'text-[#6B7280] hover:bg-gray-50'}`}
+            className="flex-1 h-[40px] text-[15px] font-bold rounded-full transition-all"
+            style={{ background: !viewDeleted ? '#B3122A' : 'transparent', color: !viewDeleted ? '#fff' : '#6B6B70' }}
           >
             Active
           </button>
-          <button 
+          <button
             onClick={() => setViewDeleted(true)}
-            className={`flex-1 h-[36px] text-[13px] font-semibold rounded-[6px] transition-all ${viewDeleted ? 'bg-[#0F766E] text-white' : 'text-[#6B7280] hover:bg-gray-50'}`}
+            className="flex-1 h-[40px] text-[15px] font-bold rounded-full transition-all"
+            style={{ background: viewDeleted ? '#B3122A' : 'transparent', color: viewDeleted ? '#fff' : '#6B6B70' }}
           >
             Deleted
           </button>
@@ -118,14 +121,15 @@ const Records = () => {
         {/* Date Filters */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">
           {filters.map(filter => (
-            <button 
+            <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`whitespace-nowrap px-3 h-[32px] rounded-full font-medium text-[12px] transition-colors border ${
-                activeFilter === filter 
-                  ? 'bg-[#0F766E] text-white border-[#0F766E]' 
-                  : 'bg-white border-[#E5E7EB] text-[#4B5563]'
-              }`}
+              className="whitespace-nowrap px-4 h-[36px] rounded-full font-bold text-[14px] transition-colors border"
+              style={
+                activeFilter === filter
+                  ? { background: '#B3122A', color: '#fff', borderColor: '#B3122A' }
+                  : { background: '#fff', color: '#6B6B70', borderColor: '#EFEBE8' }
+              }
             >
               {filter}
             </button>
@@ -133,77 +137,79 @@ const Records = () => {
         </div>
 
         {/* Record Count */}
-        <div className="mb-3 flex justify-between items-end px-1">
-          <h2 className="text-[14px] font-semibold text-[#1F2937]">
+        <div className="mb-2.5 flex justify-between items-end px-1">
+          <h2 className="text-[18px] font-extrabold text-[#1B1B1F]">
             {filteredRecords.length} {viewDeleted ? 'Deleted' : 'Active'}
           </h2>
-          <span className="text-[11px] text-[#6B7280]">Updated just now</span>
+          <span className="text-[13px] text-[#8A8A8E]">Updated just now</span>
         </div>
 
         {/* Record Cards */}
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-3">
           {loading ? (
             <div className="flex justify-center items-center h-24">
-              <span className="material-symbols-outlined animate-spin text-[24px] text-[#0F766E]">progress_activity</span>
+              <Loader2 size={24} className="animate-spin text-[#B3122A]" />
             </div>
           ) : error ? (
-            <div className="bg-[#FEE2E2] text-[#991B1B] p-3 rounded-lg text-[13px]">
+            <div className="bg-[#FDEBEC] text-[#B3122A] p-3 rounded-lg text-[13px]">
               {error}
             </div>
           ) : filteredRecords.length > 0 ? (
             filteredRecords.map(record => (
-              <div key={record.id} className="bg-white rounded-[12px] border border-[#E5E7EB] p-3 shadow-sm flex flex-col gap-2.5">
-                
+              <div key={record.id} className="bg-white rounded-[16px] border border-[#EFEBE8] p-4 flex flex-col gap-3">
+
                 {/* Header: Room, Name, Price, Status */}
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-[36px] h-[36px] bg-[#CCFBF1] text-[#0F766E] rounded-lg flex items-center justify-center font-bold text-[14px]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center font-extrabold text-[14px]" style={{ background: '#FDEBEC', color: '#B3122A' }}>
                       {record.room_number}
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[14px] font-bold text-[#1F2937] leading-tight">{record.guest_name || 'Guest'}</span>
-                      <span className="text-[12px] text-[#6B7280] leading-tight">{record.phone_number ? `+91 ${record.phone_number}` : `${record.members || 1} Mbrs`}</span>
+                      <span className="text-[15px] font-extrabold text-[#1B1B1F] leading-tight">{record.guest_name || 'Guest'}</span>
+                      <span className="text-[12.5px] text-[#6B6B70] leading-tight">{record.phone_number ? `+91 ${record.phone_number}` : `${record.members || 1} Mbrs`}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className="font-bold text-[#1F2937] text-[15px] leading-none">₹{record.cost || 0}</span>
+                    <span className="font-extrabold text-[#1B1B1F] text-[15px] leading-none">₹{record.cost || 0}</span>
                   </div>
                 </div>
 
                 {/* Body: Check In/Out */}
-                <div className="flex items-center gap-2 text-[12px] text-[#4B5563] bg-[#F8FAFC] p-2 rounded-lg">
-                  <span className="material-symbols-outlined text-[14px] text-[#9CA3AF]">login</span>
+                <div className="flex items-center gap-2 text-[12.5px] text-[#6B6B70] bg-[#FAF9F7] p-2.5 rounded-[10px]">
+                  <LogIn size={14} className="text-[#B0ACA8]" />
                   <span>{formatDate(record.check_in)}</span>
-                  <span className="material-symbols-outlined text-[14px] text-[#9CA3AF] mx-1">arrow_forward</span>
+                  <ArrowRight size={14} className="text-[#B0ACA8] mx-1" />
                   <span>{record.check_out ? formatDate(record.check_out) : 'Pending'}</span>
                 </div>
 
                 {/* Actions */}
                 <div className="flex gap-2">
                   {!viewDeleted && (
-                    <button 
-                      onClick={() => handleDelete(record.id)} 
-                      className="flex-1 h-[40px] flex items-center justify-center gap-1.5 rounded-lg border border-[#EF4444] text-[#EF4444] font-semibold text-[13px] active:bg-[#FEF2F2]"
+                    <button
+                      onClick={() => handleDelete(record.id)}
+                      className="flex-1 h-[42px] flex items-center justify-center gap-1.5 rounded-full border font-bold text-[13.5px] active:opacity-70"
+                      style={{ borderColor: '#B3122A', color: '#B3122A' }}
                     >
-                      <span className="material-symbols-outlined text-[16px]">delete</span>
+                      <Trash2 size={16} />
                       Delete
                     </button>
                   )}
-                  <button 
-                    onClick={() => record.aadhaar_image ? window.open(record.aadhaar_image, '_blank') : alert('No Aadhaar image uploaded')} 
-                    className="flex-1 h-[40px] flex items-center justify-center gap-1.5 rounded-lg bg-[#0F766E] text-white font-semibold text-[13px] active:bg-[#0D635C]"
+                  <button
+                    onClick={() => record.aadhaar_image ? window.open(record.aadhaar_image, '_blank') : alert('No Aadhaar image uploaded')}
+                    className="flex-1 h-[42px] flex items-center justify-center gap-1.5 rounded-full text-white font-bold text-[13.5px] active:opacity-90"
+                    style={{ background: '#B3122A' }}
                   >
-                    <span className="material-symbols-outlined text-[16px]">visibility</span>
+                    <Eye size={16} />
                     View Aadhaar
                   </button>
                 </div>
-                
+
               </div>
             ))
           ) : (
-            <div className="py-8 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[12px] border border-[#E5E7EB] shadow-sm">
-              <span className="material-symbols-outlined text-[32px] text-[#9CA3AF] mb-2">event_note</span>
-              <h3 className="text-[14px] font-semibold text-[#1F2937]">No Bookings Found</h3>
+            <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[18px] border border-[#EFEBE8]">
+              <CalendarX2 size={30} className="text-[#B3122A] mb-3" />
+              <h3 className="text-[17px] font-extrabold text-[#1B1B1F]">No Bookings Found</h3>
             </div>
           )}
         </div>

@@ -1,24 +1,25 @@
 import React from 'react';
 
-const DashboardCard = ({ title, value, icon, variant = 'primary' }) => {
-  const variants = {
-    primary: 'bg-[#0F766E] text-white',
-    secondary: 'bg-[#FFFFFF] border border-[#E5E7EB] text-[#1F2937]',
-    tertiary: 'bg-[#0F766E] text-white',
-    surface: 'bg-[#FFFFFF] border border-[#E5E7EB] text-[#1F2937]',
-  };
-
+const DashboardCard = ({ title, value, icon: Icon, variant = 'primary' }) => {
+  const isFilled = variant === 'primary' || variant === 'tertiary';
   const formattedValue = value.toString().replace('$', '₹');
 
   return (
-    <div className={`rounded-[20px] p-[16px] flex flex-col justify-center shadow-[0_4px_12px_rgba(0,0,0,0.08)] h-[84px] w-full ${variants[variant]}`}>
-      <div className="flex justify-between items-center mb-1">
-        <p className="text-[12px] font-medium opacity-90 leading-tight" style={{ fontFamily: 'Roboto, sans-serif' }}>{title}</p>
-        <span className="material-symbols-outlined text-[20px] opacity-80">{icon}</span>
-      </div>
-      <div className="mt-0.5">
-        <p className="text-[32px] font-bold leading-none tracking-tight" style={{ fontFamily: 'Roboto, sans-serif' }}>{formattedValue}</p>
-      </div>
+    <div
+      className={`rounded-[20px] p-[20px] h-[100px] w-full relative flex flex-col justify-between ${
+        isFilled ? 'text-white' : 'border border-[#EFEBE8] text-[#1B1B1F]'
+      }`}
+      style={{ background: isFilled ? '#B3122A' : '#FFFFFF' }}
+    >
+      <p className="text-[14px] font-medium" style={{ opacity: isFilled ? 0.9 : 1, color: isFilled ? '#fff' : '#6B6B70' }}>
+        {title}
+      </p>
+      {Icon && (
+        <div className="absolute top-[18px] right-[18px]" style={{ color: isFilled ? 'rgba(255,255,255,0.9)' : '#B3122A' }}>
+          <Icon size={20} strokeWidth={2} />
+        </div>
+      )}
+      <p className="font-display text-[30px] font-extrabold leading-none">{formattedValue}</p>
     </div>
   );
 };

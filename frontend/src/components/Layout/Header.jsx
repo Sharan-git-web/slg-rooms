@@ -1,19 +1,20 @@
 import React from 'react';
+import { LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-white h-[72px] flex items-center px-[24px] shadow-[0_2px_10px_rgba(15,118,110,0.08)] rounded-none border-b border-[#E5E7EB]">
-      <h1 className="text-[34px] font-[800] tracking-[-0.5px] text-[#1F2937] leading-none w-full flex items-center" style={{ fontFamily: 'Roboto, sans-serif' }}>SLG Rooms</h1>
+    <header className="fixed top-0 w-full z-50 bg-white h-[72px] flex items-center justify-between px-[22px] border-b border-[#EFEBE8]">
+      <h1 className="font-display text-[25px] font-extrabold tracking-[-0.8px] text-[#1B1B1F] leading-none">SLG Rooms</h1>
       {isAuthenticated && (
         <button
           onClick={logout}
-          className="text-[#6B7280] flex items-center shrink-0 active:scale-95 transition-transform"
+          className="text-[#B3122A] flex items-center justify-center w-[34px] h-[34px] rounded-[10px] active:scale-95 transition-transform"
           aria-label="Sign out"
         >
-          <span className="material-symbols-outlined text-[24px]" data-icon="logout">logout</span>
+          <LogOut size={20} strokeWidth={2} />
         </button>
       )}
     </header>

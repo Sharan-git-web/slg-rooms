@@ -1,102 +1,68 @@
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const RoomCard = ({ number, type, status, checkIn, checkOut, members, isReady, showAssign, onCheckIn }) => {
-  const getBorderColor = () => {
+  const getStatusStyles = () => {
     switch (status.toLowerCase()) {
       case 'available':
-        return 'border-[#22C55E]';
+        return { bg: '#E8F6EC', color: '#16A34A' };
       case 'occupied':
-        return 'border-[#DC2626]';
-      default:
-        return 'border-[#E5E7EB]';
-    }
-  };
-
-  const getNumberBg = () => {
-    switch (status.toLowerCase()) {
-      case 'available':
-        return 'bg-[#DCFCE7] text-[#166534]';
-      case 'occupied':
-        return 'bg-[#FEE2E2] text-[#991B1B]';
-      default:
-        return 'bg-[#F8FAFC] text-[#6B7280]';
-    }
-  };
-  
-  const getStatusBadgeStyles = () => {
-    switch (status.toLowerCase()) {
-      case 'available':
-        return 'bg-[#DCFCE7] text-[#166534]';
-      case 'occupied':
-        return 'bg-[#FEE2E2] text-[#991B1B]';
+        return { bg: '#FDEBEC', color: '#B3122A' };
       case 'checkout soon':
-        return 'bg-[#FEF3C7] text-[#92400E]';
+        return { bg: '#FEF3C7', color: '#92400E' };
       default:
-        return 'bg-[#F8FAFC] text-[#6B7280]';
+        return { bg: '#F1F5F9', color: '#6B6B70' };
     }
   };
-
-  const getStatusDotColor = () => {
-    switch (status.toLowerCase()) {
-      case 'available': return 'bg-[#166534]';
-      case 'occupied': return 'bg-[#991B1B]';
-      case 'checkout soon': return 'bg-[#92400E]';
-      default: return 'bg-[#6B7280]';
-    }
-  };
+  const statusStyles = getStatusStyles();
 
   return (
-    <div className={`bg-[#FFFFFF] rounded-[20px] p-[20px] border-l-[4px] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex flex-col gap-[18px] relative overflow-hidden ${getBorderColor()} border-t border-r border-b border-[#E5E7EB] border-t-[1px] border-r-[1px] border-b-[1px]`}>
-      {/* Top Section */}
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-3">
-          {/* Room Number Box */}
-          <div className={`w-[40px] h-[40px] rounded-[8px] flex items-center justify-center font-bold text-[16px] ${getNumberBg()}`}>
-            {number}
-          </div>
-          {/* Room Type & Members */}
-          <div className="flex flex-col gap-0.5">
-            <h3 className="text-[18px] font-bold text-[#1F2937] leading-tight" style={{ fontFamily: 'Roboto, sans-serif' }}>{type}</h3>
-            <p className="text-[14px] font-medium text-[#6B7280] leading-tight" style={{ fontFamily: 'Roboto, sans-serif' }}>
-              {members ? `Guests: ${members}` : 'Guests: Vacant'}
-            </p>
-          </div>
+    <div className="bg-white rounded-[18px] p-[18px] border border-[#EFEBE8]">
+      <div className="flex items-center gap-3">
+        <div
+          className="font-extrabold text-[15px] px-3 py-2 rounded-[10px] min-w-[34px] text-center"
+          style={{ background: '#FDEBEC', color: '#B3122A' }}
+        >
+          {number}
         </div>
-        
-        {/* Status Badge */}
-        <div className={`h-[28px] px-[12px] rounded-full text-[12px] font-bold flex items-center justify-center gap-1.5 ${getStatusBadgeStyles()}`} style={{ fontFamily: 'Roboto, sans-serif' }}>
-          <div className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor()}`}></div>
+        <div className="flex-1">
+          <h3 className="font-extrabold text-[17px] text-[#1B1B1F] leading-tight">{type}</h3>
+          <p className="text-[13px] text-[#6B6B70]">{members ? `Guests: ${members}` : 'Guests: Vacant'}</p>
+        </div>
+        <div
+          className="text-[13px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 whitespace-nowrap"
+          style={{ background: statusStyles.bg, color: statusStyles.color }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusStyles.color }}></span>
           {status}
         </div>
       </div>
-      
-      {/* Divider */}
-      <hr className="border-t border-[#E5E7EB] m-0" />
-      
-      {/* Bottom Section */}
+
+      <div className="h-px bg-[#F0EDEA] my-[14px]" />
+
       {isReady ? (
-        <div className="flex justify-between items-center">
-          <span className="text-[14px] font-medium italic text-[#6B7280]" style={{ fontFamily: 'Roboto, sans-serif' }}>Ready for Check-in</span>
+        <div className="flex items-center justify-between">
+          <span className="text-[14px] italic text-[#8A8A8E]">Ready for Check-in</span>
           {showAssign && (
-            <button 
+            <button
               onClick={onCheckIn}
-              className="bg-[#0F766E] hover:bg-[#0D9488] text-white h-[40px] px-4 rounded-[16px] text-[14px] font-semibold transition-colors shadow-sm flex items-center justify-center cursor-pointer" 
-              style={{ fontFamily: 'Roboto, sans-serif' }}
+              className="text-white font-bold text-[15px] px-[22px] py-[11px] rounded-full active:scale-95 transition-transform cursor-pointer"
+              style={{ background: '#B3122A' }}
             >
               Check In
             </button>
           )}
         </div>
       ) : (
-        <div className="flex justify-between items-center px-1">
+        <div className="flex items-center justify-between px-1">
           <div className="flex flex-col">
-            <span className="text-[12px] font-semibold text-[#6B7280] mb-0.5 uppercase tracking-wide" style={{ fontFamily: 'Roboto, sans-serif' }}>Check-in</span>
-            <span className="text-[14px] font-bold text-[#1F2937]" style={{ fontFamily: 'Roboto, sans-serif' }}>{checkIn}</span>
+            <span className="text-[12px] font-semibold text-[#6B6B70] mb-0.5 uppercase tracking-wide">Check-in</span>
+            <span className="text-[14px] font-bold text-[#1B1B1F]">{checkIn}</span>
           </div>
-          <span className="material-symbols-outlined text-[#9CA3AF] text-[18px]">arrow_right_alt</span>
+          <ArrowRight size={18} className="text-[#B0ACA8]" />
           <div className="flex flex-col text-right">
-            <span className="text-[12px] font-semibold text-[#6B7280] mb-0.5 uppercase tracking-wide" style={{ fontFamily: 'Roboto, sans-serif' }}>Check-out</span>
-            <span className="text-[14px] font-bold text-[#1F2937]" style={{ fontFamily: 'Roboto, sans-serif' }}>{checkOut}</span>
+            <span className="text-[12px] font-semibold text-[#6B6B70] mb-0.5 uppercase tracking-wide">Check-out</span>
+            <span className="text-[14px] font-bold text-[#1B1B1F]">{checkOut}</span>
           </div>
         </div>
       )}

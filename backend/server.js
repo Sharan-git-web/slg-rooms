@@ -5,6 +5,9 @@
 // to a server that isn't already set to IST.
 process.env.TZ = process.env.TZ || 'Asia/Kolkata';
 
+const dns = require('node:dns');
+dns.setDefaultResultOrder('ipv4first');
+
 require('dotenv').config();
 const app = require('./app');
 

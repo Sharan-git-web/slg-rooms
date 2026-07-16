@@ -34,7 +34,7 @@ const Login = () => {
   };
 
   const inputBaseClasses =
-    'w-full h-[52px] rounded-[14px] bg-white border border-[#E2E8F0] pl-11 pr-4 text-[15px] text-[#0F172A] placeholder:text-[#94A3B8] outline-none transition-all duration-200 focus:border-[#0F766E] focus:ring-4 focus:ring-[#0F766E]/10';
+    'w-full h-[52px] rounded-[14px] bg-white border border-[#E2E8F0] pl-11 pr-4 text-[15px] text-[#0F172A] placeholder:text-[#94A3B8] outline-none transition-all duration-200 focus:border-[#B3122A] focus:ring-4 focus:ring-[#B3122A]/10';
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#F8FAFC] flex items-center justify-center px-4 py-10">
@@ -45,17 +45,17 @@ const Login = () => {
       >
         <defs>
           <pattern id="slg-dot-grid" width="28" height="28" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1.5" fill="#0F766E" />
+            <circle cx="2" cy="2" r="1.5" fill="#B3122A" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#slg-dot-grid)" />
       </svg>
       <div
-        className="absolute -top-24 -right-24 h-[420px] w-[420px] rounded-full border border-[#0F766E]/[0.05]"
+        className="absolute -top-24 -right-24 h-[420px] w-[420px] rounded-full border border-[#B3122A]/[0.05]"
         aria-hidden="true"
       />
       <div
-        className="absolute -bottom-32 -left-32 h-[380px] w-[380px] rounded-full border border-[#0F766E]/[0.05]"
+        className="absolute -bottom-32 -left-32 h-[380px] w-[380px] rounded-full border border-[#B3122A]/[0.05]"
         aria-hidden="true"
       />
 
@@ -67,7 +67,7 @@ const Login = () => {
         <div className="rounded-[20px] border border-[#E2E8F0] bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] px-8 py-10 sm:px-10">
           {/* Header */}
           <div className="flex flex-col items-center text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#0F766E]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#B3122A]">
               <Building2 className="h-6 w-6 text-white" strokeWidth={2} aria-hidden="true" />
             </div>
             <h1 className="mt-4 text-[20px] font-semibold tracking-tight text-[#0F172A]">SLG Rooms</h1>
@@ -134,7 +134,7 @@ const Login = () => {
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   aria-pressed={showPassword}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8] transition-colors hover:text-[#0F766E] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/30 rounded-md p-1"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8] transition-colors hover:text-[#B3122A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B3122A]/30 rounded-md p-1"
                 >
                   {showPassword ? (
                     <EyeOff className="h-[18px] w-[18px]" aria-hidden="true" />
@@ -152,13 +152,13 @@ const Login = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 rounded-[4px] border-[#E2E8F0] text-[#0F766E] focus:ring-2 focus:ring-[#0F766E]/20 focus:ring-offset-0"
+                  className="h-4 w-4 rounded-[4px] border-[#E2E8F0] text-[#B3122A] focus:ring-2 focus:ring-[#B3122A]/20 focus:ring-offset-0"
                 />
                 <span className="text-[13px] font-medium text-[#64748B]">Remember me</span>
               </label>
               <button
                 type="button"
-                className="text-[13px] font-medium text-[#0F766E] transition-colors hover:text-[#115E59] focus:outline-none focus-visible:underline"
+                className="text-[13px] font-medium text-[#B3122A] transition-colors hover:text-[#8F0E21] focus:outline-none focus-visible:underline"
               >
                 Forgot password?
               </button>
@@ -167,7 +167,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-[#0F766E] text-[15px] font-medium text-white transition-all duration-200 hover:bg-[#115E59] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#0F766E]/20 disabled:cursor-not-allowed disabled:opacity-70"
+              className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-[#B3122A] text-[15px] font-medium text-white transition-all duration-200 hover:bg-[#8F0E21] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#B3122A]/20 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? (
                 <>

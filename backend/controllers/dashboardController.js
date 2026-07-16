@@ -5,7 +5,8 @@ exports.getDashboardStats = async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const todayIso = today.toISOString();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     const { data: bookings, error } = await supabase
       .from('bookings')
@@ -23,7 +24,8 @@ exports.getDashboardStats = async (req, res) => {
 
     bookings.forEach(booking => {
       // Check-ins today
-      if (new Date(booking.check_in) >= today) {
+      const checkInDate = new Date(booking.check_in);
+      if (checkInDate >= today && checkInDate < tomorrow) {
         checkIns++;
       }
 

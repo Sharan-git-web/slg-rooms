@@ -4,6 +4,7 @@ import RoomCard from '../components/Room/RoomCard';
 import { useNavigate } from 'react-router-dom';
 import { roomService } from '../services/roomService';
 import { dashboardService } from '../services/dashboardService';
+import { BedDouble, CircleCheck, LogIn, Wallet, ArrowRight, Loader2, DoorClosed } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -35,50 +36,49 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: 'Roboto, sans-serif' }}>
-      <div className="pt-[24px] px-4 pb-4">
-        {/* Removed duplicate Daily Overview header to save space */}
+    <div className="min-h-screen">
+      <div className="pt-6 pb-4">
         {loading ? (
           <div className="flex justify-center items-center h-32">
-            <span className="material-symbols-outlined animate-spin text-[32px] text-[#0F766E]" data-icon="progress_activity">progress_activity</span>
+            <Loader2 size={32} className="animate-spin text-[#B3122A]" />
           </div>
         ) : error ? (
-          <div className="bg-[#FEE2E2] text-[#991B1B] p-4 rounded-xl text-center mb-6 text-[14px]">
+          <div className="bg-[#FDEBEC] text-[#B3122A] p-4 rounded-xl text-center mb-6 text-[14px]">
             {error}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-[8px]">
-            <DashboardCard title="Rooms Occupied" value={stats?.occupied?.toString() || "0"} icon="bed" variant="primary" />
-            <DashboardCard title="Rooms Available" value={stats?.available?.toString() || "0"} icon="check_circle" variant="surface" />
-            <DashboardCard title="Check-ins" value={stats?.checkIns?.toString().padStart(2, '0') || "00"} icon="login" variant="surface" />
-            <DashboardCard title="Today's Revenue" value={`₹${(stats?.revenue || 0).toLocaleString()}`} icon="payments" variant="tertiary" />
+          <div className="grid grid-cols-2 gap-[14px]">
+            <DashboardCard title="Rooms Occupied" value={stats?.occupied?.toString() || "0"} icon={BedDouble} variant="primary" />
+            <DashboardCard title="Rooms Available" value={stats?.available?.toString() || "0"} icon={CircleCheck} variant="surface" />
+            <DashboardCard title="Check-ins" value={stats?.checkIns?.toString().padStart(2, '0') || "00"} icon={LogIn} variant="surface" />
+            <DashboardCard title="Today's Revenue" value={`₹${(stats?.revenue || 0).toLocaleString()}`} icon={Wallet} variant="tertiary" />
           </div>
         )}
 
-        <div className="mb-3 flex justify-between items-center mt-[28px]">
-          <h3 className="text-[20px] font-semibold leading-tight text-[#1F2937]">Room Status</h3>
-          <button onClick={() => navigate('/records')} className="text-[#0F766E] text-[14px] font-medium tracking-[0.2px] flex items-center gap-1 active:scale-95 transition-transform">
-            View All <span className="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+        <div className="mb-3.5 flex justify-between items-center mt-7">
+          <h3 className="font-display text-[21px] font-extrabold text-[#1B1B1F]">Room Status</h3>
+          <button onClick={() => navigate('/records')} className="text-[#B3122A] text-[14px] font-bold flex items-center gap-1 active:scale-95 transition-transform">
+            View All <ArrowRight size={16} strokeWidth={2.5} />
           </button>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3.5">
           {loading ? (
             <div className="flex justify-center items-center h-32">
-               <span className="material-symbols-outlined animate-spin text-[32px] text-[#0F766E]" data-icon="progress_activity">progress_activity</span>
+              <Loader2 size={32} className="animate-spin text-[#B3122A]" />
             </div>
           ) : rooms.length > 0 ? (
             rooms.map(room => (
-              <RoomCard 
-                key={room.number} 
-                {...room} 
+              <RoomCard
+                key={room.number}
+                {...room}
                 onCheckIn={() => navigate('/new-entry', { state: { selectedRoom: room.number } })}
               />
             ))
           ) : (
-            <div className="py-[40px] flex flex-col items-center justify-center text-center px-4 bg-white rounded-[20px] border border-[#E5E7EB] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
-              <span className="material-symbols-outlined text-[32px] text-[#9CA3AF] mb-2" data-icon="meeting_room">meeting_room</span>
-              <p className="font-semibold text-[14px] text-[#1F2937]">No room data available.</p>
+            <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[20px] border border-[#EFEBE8]">
+              <DoorClosed size={32} className="text-[#B0ACA8] mb-2" />
+              <p className="font-bold text-[14px] text-[#1B1B1F]">No room data available.</p>
             </div>
           )}
         </div>

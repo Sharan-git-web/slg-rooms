@@ -1,30 +1,35 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { Home as HomeIcon, CirclePlus, History, Wallet } from 'lucide-react';
 
 const BottomNav = () => {
   const tabs = [
-    { id: 'home', label: 'Home', icon: 'home', path: '/' },
-    { id: 'new-entry', label: 'New Entry', icon: 'add_circle', path: '/new-entry' },
-    { id: 'records', label: 'Records', icon: 'history', path: '/records' },
-    { id: 'revenue', label: 'Revenue', icon: 'payments', path: '/revenue' },
+    { id: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+    { id: 'new-entry', label: 'New Entry', Icon: CirclePlus, path: '/new-entry' },
+    { id: 'records', label: 'Records', Icon: History, path: '/records' },
+    { id: 'revenue', label: 'Revenue', Icon: Wallet, path: '/revenue' },
   ];
 
   return (
-    <nav className="fixed bottom-0 w-full z-50 bg-white border-t border-[#E5E7EB] h-[64px] flex justify-around items-center px-2 pb-safe" style={{ fontFamily: 'Roboto, sans-serif' }}>
-      {tabs.map((tab) => (
+    <nav className="fixed bottom-0 w-full z-50 bg-white border-t border-[#EFEBE8] flex px-2 pt-2.5 pb-3.5 pb-safe">
+      {tabs.map(({ id, label, Icon, path }) => (
         <NavLink
-          key={tab.id}
-          to={tab.path}
-          className={({ isActive }) =>
-            `flex flex-col items-center justify-center w-[64px] h-full ${isActive ? 'text-[#0F766E]' : 'text-[#6B7280]'}`
-          }
+          key={id}
+          to={path}
+          end={path === '/'}
+          className="flex-1 flex flex-col items-center gap-1"
         >
           {({ isActive }) => (
             <>
-              <div className={`flex items-center justify-center w-[40px] h-[24px] rounded-full mb-1 transition-colors ${isActive ? 'bg-[#CCFBF1]' : 'bg-transparent'}`}>
-                <span className="material-symbols-outlined text-[20px]" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}} data-icon={tab.icon}>{tab.icon}</span>
+              <div
+                className="flex items-center justify-center w-[44px] h-[30px] rounded-full transition-colors"
+                style={{ background: isActive ? '#FDEBEC' : 'transparent', color: isActive ? '#B3122A' : '#8A8A8E' }}
+              >
+                <Icon size={21} strokeWidth={2.2} />
               </div>
-              <span className="text-[11px] font-medium leading-none tracking-wide">{tab.label}</span>
+              <span className="text-[11.5px] font-bold" style={{ color: isActive ? '#B3122A' : '#8A8A8E' }}>
+                {label}
+              </span>
             </>
           )}
         </NavLink>

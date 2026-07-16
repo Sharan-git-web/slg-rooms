@@ -5,6 +5,7 @@ import { roomService } from '../services/roomService';
 import Input from '../components/Common/Input';
 import Button from '../components/Common/Button';
 import CameraCapture from '../components/Common/CameraCapture';
+import { Loader2, CircleCheck, Save } from 'lucide-react';
 
 const Booking = () => {
   const location = useLocation();
@@ -118,18 +119,18 @@ const Booking = () => {
   return (
     <>
       <header className="py-6 mt-4">
-        <h2 className="text-[24px] font-bold leading-[32px] text-[#1F2937]">New Guest Entry</h2>
-        <p className="text-[14px] font-normal leading-[22px] text-[#4B5563] mt-1">Register a new check-in for the lodge.</p>
+        <h2 className="font-display text-[24px] font-extrabold leading-8 text-[#1B1B1F]">New Guest Entry</h2>
+        <p className="text-[14px] font-normal leading-[22px] text-[#6B6B70] mt-1">Register a new check-in for the lodge.</p>
       </header>
 
       {error && (
-        <div className="bg-[#FEE2E2] text-[#991B1B] p-3 rounded-lg mb-4 text-sm font-medium">
+        <div className="bg-[#FDEBEC] text-[#B3122A] p-3 rounded-lg mb-4 text-sm font-medium">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="bg-[#DCFCE7] text-[#166534] p-3 rounded-lg mb-4 text-sm font-medium">
+        <div className="bg-[#E8F6EC] text-[#16A34A] p-3 rounded-lg mb-4 text-sm font-medium">
           Booking created successfully!
         </div>
       )}
@@ -142,13 +143,13 @@ const Booking = () => {
         
         <div className="grid grid-cols-2 gap-gutter">
           <div className="flex flex-col">
-            <label className="text-[13px] font-bold text-[#1F2937] tracking-wide mb-1.5 ml-1">Room Number *</label>
+            <label className="text-[13px] font-bold text-[#1B1B1F] tracking-wide mb-1.5 ml-1">Room Number *</label>
             <select
               name="roomNumber"
               value={formData.roomNumber}
               onChange={handleChange}
               required
-              className="bg-[#FFFFFF] border border-[#E5E7EB] text-[#1F2937] text-[15px] font-medium rounded-xl focus:ring-2 focus:ring-[#14B8A6]/20 focus:border-[#14B8A6] block w-full p-3.5 transition-all outline-none"
+              className="bg-[#FFFFFF] border border-[#EFEBE8] text-[#1B1B1F] text-[15px] font-medium rounded-[14px] focus:ring-2 focus:ring-[#B3122A]/20 focus:border-[#B3122A] block w-full p-3.5 transition-all outline-none"
             >
               <option value="">Select Room</option>
               {availableRooms.map(r => (
@@ -193,11 +194,12 @@ const Booking = () => {
         />
         
         <div className="pt-8 flex flex-col gap-3 pb-4">
-          <Button 
-            type="submit" 
-            disabled={loading} 
+          <Button
+            type="submit"
+            disabled={loading}
             variant={success ? 'tertiary' : 'primary'}
-            icon={loading ? 'progress_activity' : success ? 'check_circle' : 'save'}
+            icon={loading ? Loader2 : success ? CircleCheck : Save}
+            iconSpin={loading}
           >
             {loading ? 'Saving...' : success ? 'Saved Successfully' : 'Save Entry'}
           </Button>
