@@ -47,7 +47,7 @@ const Home = () => {
             {error}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-[14px]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px]">
             <DashboardCard title="Rooms Occupied" value={stats?.occupied?.toString() || "0"} icon={BedDouble} variant="primary" />
             <DashboardCard title="Rooms Available" value={stats?.available?.toString() || "0"} icon={CircleCheck} variant="surface" />
             <DashboardCard title="Check-ins" value={stats?.checkIns?.toString().padStart(2, '0') || "00"} icon={LogIn} variant="surface" />
@@ -62,9 +62,9 @@ const Home = () => {
           </button>
         </div>
 
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {loading ? (
-            <div className="flex justify-center items-center h-32">
+            <div className="flex justify-center items-center h-32 md:col-span-full">
               <Loader2 size={32} className="animate-spin text-[#B3122A]" />
             </div>
           ) : rooms.length > 0 ? (
@@ -76,7 +76,7 @@ const Home = () => {
               />
             ))
           ) : (
-            <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[20px] border border-[#EFEBE8]">
+            <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[20px] border border-[#EFEBE8] md:col-span-full">
               <DoorClosed size={32} className="text-[#B0ACA8] mb-2" />
               <p className="font-bold text-[14px] text-[#1B1B1F]">No room data available.</p>
             </div>

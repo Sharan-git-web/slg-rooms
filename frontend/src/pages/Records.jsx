@@ -145,13 +145,13 @@ const Records = () => {
         </div>
 
         {/* Record Cards */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {loading ? (
-            <div className="flex justify-center items-center h-24">
+            <div className="flex justify-center items-center h-24 md:col-span-full">
               <Loader2 size={24} className="animate-spin text-[#B3122A]" />
             </div>
           ) : error ? (
-            <div className="bg-[#FDEBEC] text-[#B3122A] p-3 rounded-lg text-[13px]">
+            <div className="bg-[#FDEBEC] text-[#B3122A] p-3 rounded-lg text-[13px] md:col-span-full">
               {error}
             </div>
           ) : filteredRecords.length > 0 ? (
@@ -207,7 +207,7 @@ const Records = () => {
               </div>
             ))
           ) : (
-            <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[18px] border border-[#EFEBE8]">
+            <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white rounded-[18px] border border-[#EFEBE8] md:col-span-full">
               <CalendarX2 size={30} className="text-[#B3122A] mb-3" />
               <h3 className="text-[17px] font-extrabold text-[#1B1B1F]">No Bookings Found</h3>
             </div>

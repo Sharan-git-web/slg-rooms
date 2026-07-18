@@ -11,7 +11,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 w-full z-50 bg-white border-t border-[#EFEBE8] flex px-2 pt-2.5 pb-3.5 pb-safe">
+    <nav className="md:hidden fixed bottom-0 w-full z-50 bg-white border-t border-[#EFEBE8] flex px-2 pt-2.5 pb-3.5 pb-safe">
       {tabs.map(({ id, label, Icon, path }) => (
         <NavLink
           key={id}

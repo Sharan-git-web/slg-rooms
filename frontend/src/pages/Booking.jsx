@@ -117,7 +117,7 @@ const Booking = () => {
   };
 
   return (
-    <>
+    <div className="md:max-w-xl md:mx-auto">
       <header className="py-6 mt-4">
         <h2 className="font-display text-[24px] font-extrabold leading-8 text-[#1B1B1F]">New Guest Entry</h2>
         <p className="text-[14px] font-normal leading-[22px] text-[#6B6B70] mt-1">Register a new check-in for the lodge.</p>
@@ -213,7 +213,7 @@ const Booking = () => {
           </Button>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

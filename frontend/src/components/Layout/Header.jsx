@@ -6,7 +6,7 @@ const Header = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-white h-[72px] flex items-center justify-between px-[22px] border-b border-[#EFEBE8]">
+    <header className="md:hidden fixed top-0 w-full z-50 bg-white h-[72px] flex items-center justify-between px-[22px] border-b border-[#EFEBE8]">
       <h1 className="font-display text-[25px] font-extrabold tracking-[-0.8px] text-[#1B1B1F] leading-none">SLG Rooms</h1>
       {isAuthenticated && (
         <button

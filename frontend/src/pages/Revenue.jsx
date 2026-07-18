@@ -87,8 +87,9 @@ const Revenue = () => {
             </div>
           </div>
 
-          {/* Revenue Trends */}
-          <div className="bg-[#FFFFFF] rounded-[20px] border border-[#EFEBE8] p-5 mb-6">
+          {/* Revenue Trends + Sources */}
+          <div className="md:grid md:grid-cols-5 md:gap-6 md:items-start">
+          <div className="bg-[#FFFFFF] rounded-[20px] border border-[#EFEBE8] p-5 mb-6 md:col-span-3 md:mb-0">
             <div className="flex justify-between items-center mb-5 relative">
               <h3 className="font-display text-[19px] font-extrabold text-[#1B1B1F]">Revenue Trends</h3>
               <div className="relative">
@@ -153,6 +154,7 @@ const Revenue = () => {
             </div>
           </div>
 
+          <div className="md:col-span-2">
           {/* Revenue Sources */}
           <div className="mb-3 flex justify-between items-center">
             <h3 className="font-display text-[19px] font-extrabold text-[#1B1B1F]">Revenue Sources</h3>
@@ -181,6 +183,8 @@ const Revenue = () => {
                 <p className="text-[13px]">No revenue sources found.</p>
               </div>
             )}
+          </div>
+          </div>
           </div>
         </>
       )}
