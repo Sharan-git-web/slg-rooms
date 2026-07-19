@@ -21,7 +21,8 @@ const Booking = () => {
     cost: ''
   });
   
-  const [cameraImage, setCameraImage] = useState(null);
+  const [cameraImageFront, setCameraImageFront] = useState(null);
+  const [cameraImageBack, setCameraImageBack] = useState(null);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -50,9 +51,14 @@ const Booking = () => {
     }));
   };
 
-  const handleCameraCapture = (e) => {
+  const handleCameraCaptureFront = (e) => {
     const file = e.target.files?.[0];
-    if (file) setCameraImage(file);
+    if (file) setCameraImageFront(file);
+  };
+
+  const handleCameraCaptureBack = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setCameraImageBack(file);
   };
 
   const handleClear = () => {
@@ -66,7 +72,8 @@ const Booking = () => {
       checkOutTime: new Date(Date.now() + 86400000 - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       cost: ''
     });
-    setCameraImage(null);
+    setCameraImageFront(null);
+    setCameraImageBack(null);
     setError(null);
     setSuccess(false);
   };
@@ -79,7 +86,7 @@ const Booking = () => {
     
     try {
       let dataToSubmit = formData;
-      if (cameraImage) {
+      if (cameraImageFront || cameraImageBack) {
         const fd = new FormData();
         fd.append('room_number', formData.roomNumber);
         fd.append('members', formData.totalMembers);
@@ -89,7 +96,8 @@ const Booking = () => {
         fd.append('cost', formData.cost);
         fd.append('guest_name', formData.guestName);
         fd.append('phone_number', formData.phoneNumber);
-        fd.append('aadhaar_image', cameraImage);
+        if (cameraImageFront) fd.append('aadhaar_images', cameraImageFront);
+        if (cameraImageBack) fd.append('aadhaar_images', cameraImageBack);
         dataToSubmit = fd;
       } else {
         dataToSubmit = {
@@ -175,7 +183,10 @@ const Booking = () => {
           onChange={handleChange} placeholder="98765 43210" type="tel" required 
         />
         
-        <CameraCapture onCapture={handleCameraCapture} hasImage={!!cameraImage} />
+        <div className="grid grid-cols-2 gap-gutter">
+          <CameraCapture onCapture={handleCameraCaptureFront} hasImage={!!cameraImageFront} label="Front Image" />
+          <CameraCapture onCapture={handleCameraCaptureBack} hasImage={!!cameraImageBack} label="Back Image" />
+        </div>
         
         <div className="space-y-4">
           <Input 

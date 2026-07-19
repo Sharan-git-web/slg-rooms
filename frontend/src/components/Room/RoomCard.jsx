@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-const RoomCard = ({ number, type, status, checkIn, checkOut, members, isReady, showAssign, onCheckIn }) => {
+const RoomCard = ({ number, type, status, checkIn, checkOut, members, isReady, showAssign, bookingId, onCheckIn, onCheckout }) => {
   const getStatusStyles = () => {
     switch (status.toLowerCase()) {
       case 'available':
@@ -54,16 +54,27 @@ const RoomCard = ({ number, type, status, checkIn, checkOut, members, isReady, s
           )}
         </div>
       ) : (
-        <div className="flex items-center justify-between px-1">
-          <div className="flex flex-col">
-            <span className="text-[12px] font-semibold text-[#6B6B70] mb-0.5 uppercase tracking-wide">Check-in</span>
-            <span className="text-[14px] font-bold text-[#1B1B1F]">{checkIn}</span>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex flex-col">
+              <span className="text-[12px] font-semibold text-[#6B6B70] mb-0.5 uppercase tracking-wide">Check-in</span>
+              <span className="text-[14px] font-bold text-[#1B1B1F]">{checkIn}</span>
+            </div>
+            <ArrowRight size={18} className="text-[#B0ACA8]" />
+            <div className="flex flex-col text-right">
+              <span className="text-[12px] font-semibold text-[#6B6B70] mb-0.5 uppercase tracking-wide">Check-out</span>
+              <span className="text-[14px] font-bold text-[#1B1B1F]">{checkOut}</span>
+            </div>
           </div>
-          <ArrowRight size={18} className="text-[#B0ACA8]" />
-          <div className="flex flex-col text-right">
-            <span className="text-[12px] font-semibold text-[#6B6B70] mb-0.5 uppercase tracking-wide">Check-out</span>
-            <span className="text-[14px] font-bold text-[#1B1B1F]">{checkOut}</span>
-          </div>
+          {onCheckout && (
+            <button
+              onClick={() => onCheckout(bookingId)}
+              className="text-white font-bold text-[14px] w-full py-[10px] rounded-[10px] active:scale-95 transition-transform cursor-pointer mt-1"
+              style={{ background: '#1B1B1F' }}
+            >
+              Checkout Now
+            </button>
+          )}
         </div>
       )}
     </div>

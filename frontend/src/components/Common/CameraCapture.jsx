@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Camera } from 'lucide-react';
 
-const CameraCapture = ({ onCapture, hasImage }) => {
+const CameraCapture = ({ onCapture, hasImage, label = "Capture Aadhaar Card" }) => {
   const fileInputRef = useRef(null);
 
   return (
@@ -16,7 +16,7 @@ const CameraCapture = ({ onCapture, hasImage }) => {
         ) : (
           <>
             <Camera size={26} strokeWidth={2} className="text-[#B3122A]" />
-            <span className="text-[15px] text-[#6B6B70]">Capture Aadhaar Card</span>
+            <span className="text-[15px] text-[#6B6B70]">{label}</span>
           </>
         )}
         <input

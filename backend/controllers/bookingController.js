@@ -11,16 +11,21 @@ const SIGNED_URL_TTL_SECONDS = 60 * 60; // 1 hour
 async function resolveAadhaarImage(booking) {
   if (!booking?.aadhaar_image) return booking;
 
-  const path = booking.aadhaar_image.includes('/aadhaar-images/')
-    ? booking.aadhaar_image.split('/aadhaar-images/').pop()
-    : booking.aadhaar_image;
+  const paths = booking.aadhaar_image.split(',');
+  const signedUrls = await Promise.all(paths.map(async (rawPath) => {
+    const path = rawPath.includes('/aadhaar-images/')
+      ? rawPath.split('/aadhaar-images/').pop()
+      : rawPath;
 
-  const { data, error } = await supabase
-    .storage
-    .from('aadhaar-images')
-    .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+    const { data, error } = await supabase
+      .storage
+      .from('aadhaar-images')
+      .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
 
-  return { ...booking, aadhaar_image: error ? null : data.signedUrl };
+    return error ? null : data.signedUrl;
+  }));
+
+  return { ...booking, aadhaar_image: signedUrls.filter(Boolean).join(',') || null };
 }
 
 exports.createBooking = async (req, res) => {
@@ -65,24 +70,25 @@ exports.createBooking = async (req, res) => {
 
     let aadhaar_image = null;
 
-    // Handle image upload to Supabase Storage if file is present
-    if (req.file) {
-      const fileExt = req.file.originalname.split('.').pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const { data, error: uploadError } = await supabase
-        .storage
-        .from('aadhaar-images')
-        .upload(fileName, req.file.buffer, {
-          contentType: req.file.mimetype
-        });
+    // Handle image uploads to Supabase Storage if files are present
+    if (req.files && req.files.length > 0) {
+      const uploadedFiles = [];
+      for (const file of req.files) {
+        const fileExt = file.originalname.split('.').pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        const { error: uploadError } = await supabase
+          .storage
+          .from('aadhaar-images')
+          .upload(fileName, file.buffer, {
+            contentType: file.mimetype
+          });
 
-      if (uploadError) {
-        throw new Error(`Storage upload failed: ${uploadError.message}`);
+        if (uploadError) {
+          throw new Error(`Storage upload failed: ${uploadError.message}`);
+        }
+        uploadedFiles.push(fileName);
       }
-
-      // Store the file path only; the bucket is private, so a signed URL
-      // is generated on read (see resolveAadhaarImage).
-      aadhaar_image = fileName;
+      aadhaar_image = uploadedFiles.join(',');
     }
 
     const { data: booking, error } = await supabase

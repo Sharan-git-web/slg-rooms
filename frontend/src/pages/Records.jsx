@@ -195,7 +195,13 @@ const Records = () => {
                     </button>
                   )}
                   <button
-                    onClick={() => record.aadhaar_image ? window.open(record.aadhaar_image, '_blank') : alert('No Aadhaar image uploaded')}
+                    onClick={() => {
+                      if (record.aadhaar_image) {
+                        record.aadhaar_image.split(',').forEach(url => window.open(url, '_blank'));
+                      } else {
+                        alert('No Aadhaar image uploaded');
+                      }
+                    }}
                     className="flex-1 h-[42px] flex items-center justify-center gap-1.5 rounded-full text-white font-bold text-[13.5px] active:opacity-90"
                     style={{ background: '#B3122A' }}
                   >

@@ -4,6 +4,7 @@ import RoomCard from '../components/Room/RoomCard';
 import { useNavigate } from 'react-router-dom';
 import { roomService } from '../services/roomService';
 import { dashboardService } from '../services/dashboardService';
+import { bookingService } from '../services/bookingService';
 import { BedDouble, CircleCheck, LogIn, Wallet, ArrowRight, Loader2, DoorClosed } from 'lucide-react';
 
 const Home = () => {
@@ -34,6 +35,23 @@ const Home = () => {
 
     fetchDashboardData();
   }, []);
+
+  const handleCheckout = async (bookingId) => {
+    try {
+      setLoading(true);
+      await bookingService.updateBooking(bookingId, { check_out: new Date().toISOString() });
+      const [statsData, roomsData] = await Promise.all([
+        dashboardService.getDashboardStats(),
+        roomService.getRoomAvailability()
+      ]);
+      setStats(statsData || { occupied: 0, available: 0, checkIns: 0, revenue: 0 });
+      setRooms(roomsData?.rooms || []);
+    } catch (err) {
+      setError("Failed to checkout. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -73,6 +91,7 @@ const Home = () => {
                 key={room.number}
                 {...room}
                 onCheckIn={() => navigate('/new-entry', { state: { selectedRoom: room.number } })}
+                onCheckout={handleCheckout}
               />
             ))
           ) : (

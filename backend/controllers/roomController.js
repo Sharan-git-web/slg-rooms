@@ -48,7 +48,8 @@ exports.getRoomAvailability = async (req, res) => {
           checkOut: activeBooking.check_out ? new Date(activeBooking.check_out).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'Pending',
           members: `${activeBooking.members} Members`,
           isReady: false,
-          showAssign: false
+          showAssign: false,
+          bookingId: activeBooking.id
         };
       } else {
         return {

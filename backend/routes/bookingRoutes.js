@@ -4,7 +4,7 @@ const bookingController = require('../controllers/bookingController');
 const upload = require('../middleware/uploadMiddleware');
 
 // Booking routes
-router.post('/', upload.single('aadhaar_image'), bookingController.createBooking);
+router.post('/', upload.array('aadhaar_images', 2), bookingController.createBooking);
 router.get('/', bookingController.getAllBookings);
 router.get('/:id', bookingController.getBookingById);
 router.put('/:id', bookingController.updateBooking);
