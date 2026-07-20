@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { bookingService } from '../services/bookingService';
-import { Search, LogIn, ArrowRight, Trash2, Eye, CalendarX2, Loader2 } from 'lucide-react';
+import { Search, LogIn, ArrowRight, Trash2, Eye, CalendarX2, Loader2, X } from 'lucide-react';
 
 const Records = () => {
   const [activeFilter, setActiveFilter] = useState('Today');
@@ -9,6 +9,7 @@ const Records = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewDeleted, setViewDeleted] = useState(false);
+  const [viewerImages, setViewerImages] = useState(null);
 
   const filters = ['Today', 'Yesterday', 'This Week', 'This Month'];
 
@@ -197,7 +198,7 @@ const Records = () => {
                   <button
                     onClick={() => {
                       if (record.aadhaar_image) {
-                        record.aadhaar_image.split(',').forEach(url => window.open(url, '_blank'));
+                        setViewerImages(record.aadhaar_image.split(',').filter(Boolean));
                       } else {
                         alert('No Aadhaar image uploaded');
                       }
@@ -220,6 +221,37 @@ const Records = () => {
           )}
         </div>
       </div>
+
+      {viewerImages && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-4"
+          onClick={() => setViewerImages(null)}
+        >
+          <button
+            onClick={() => setViewerImages(null)}
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white flex items-center justify-center"
+          >
+            <X size={18} className="text-[#1B1B1F]" />
+          </button>
+          <div
+            className="w-full max-w-md flex flex-col gap-4 max-h-full overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {viewerImages.map((url, idx) => (
+              <div key={url} className="flex flex-col gap-1.5">
+                <span className="text-white text-[13px] font-bold">
+                  {viewerImages.length > 1 ? (idx === 0 ? 'Front' : 'Back') : 'Aadhaar'}
+                </span>
+                <img
+                  src={url}
+                  alt={idx === 0 ? 'Aadhaar Front' : 'Aadhaar Back'}
+                  className="w-full rounded-[14px] border border-white/20"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
