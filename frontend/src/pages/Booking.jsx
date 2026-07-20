@@ -118,7 +118,9 @@ const Booking = () => {
         handleClear();
       }, 2000);
     } catch (err) {
-      setError('Failed to save booking. Please try again.');
+      console.error('Booking submission failed:', err);
+      const backendMessage = err.response?.data?.error || err.response?.data?.message;
+      setError(backendMessage ? `Failed to save booking: ${backendMessage}` : `Failed to save booking: ${err.message}`);
     } finally {
       setLoading(false);
     }
