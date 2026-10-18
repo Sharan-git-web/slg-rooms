@@ -32,53 +32,62 @@ const Records = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
+      const previousRecords = records;
+      // Optimistic UI update for immediate responsiveness
+      setRecords(prev => prev.map(r => r.id === id ? { ...r, status: 'deleted' } : r));
+
       try {
         await bookingService.deleteBooking(id);
-        fetchRecords(); // Refresh list after delete
       } catch (err) {
+        setRecords(previousRecords);
         alert('Failed to delete record.');
       }
     }
   };
 
-  const isSameDay = (a, b) =>
-    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-
-  const matchesDateFilter = (record) => {
-    if (!record.check_in) return false;
-    const checkIn = new Date(record.check_in);
+  const filteredRecords = React.useMemo(() => {
     const now = new Date();
+    const todayYear = now.getFullYear();
+    const todayMonth = now.getMonth();
+    const todayDate = now.getDate();
 
-    if (activeFilter === 'Today') {
-      return isSameDay(checkIn, now);
-    } else if (activeFilter === 'Yesterday') {
-      const yesterday = new Date(now);
-      yesterday.setDate(now.getDate() - 1);
-      return isSameDay(checkIn, yesterday);
-    } else if (activeFilter === 'This Week') {
-      const weekAgo = new Date(now);
-      weekAgo.setDate(now.getDate() - 7);
-      return checkIn >= weekAgo && checkIn <= now;
-    } else if (activeFilter === 'This Month') {
-      return checkIn.getFullYear() === now.getFullYear() && checkIn.getMonth() === now.getMonth();
-    }
-    return true;
-  };
+    const yesterday = new Date(todayYear, todayMonth, todayDate - 1);
+    const yYear = yesterday.getFullYear();
+    const yMonth = yesterday.getMonth();
+    const yDate = yesterday.getDate();
 
-  const filteredRecords = records.filter(record => {
-    const isDeleted = record.status === 'deleted';
-    if (viewDeleted ? !isDeleted : isDeleted) return false;
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const q = searchQuery.trim().toLowerCase();
 
-    if (!matchesDateFilter(record)) return false;
+    return records.filter(record => {
+      const isDeleted = record.status === 'deleted';
+      if (viewDeleted ? !isDeleted : isDeleted) return false;
 
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    const guestName = (record.guest_name || '').toLowerCase();
-    const phone = (record.phone_number || '').toString().toLowerCase();
-    const room = (record.room_number || '').toString();
+      if (!record.check_in) return false;
+      const checkIn = new Date(record.check_in);
+      const cYear = checkIn.getFullYear();
+      const cMonth = checkIn.getMonth();
+      const cDate = checkIn.getDate();
 
-    return guestName.includes(q) || phone.includes(q) || room.includes(q);
-  });
+      if (activeFilter === 'Today') {
+        if (cYear !== todayYear || cMonth !== todayMonth || cDate !== todayDate) return false;
+      } else if (activeFilter === 'Yesterday') {
+        if (cYear !== yYear || cMonth !== yMonth || cDate !== yDate) return false;
+      } else if (activeFilter === 'This Week') {
+        if (checkIn < weekAgo || checkIn > now) return false;
+      } else if (activeFilter === 'This Month') {
+        if (cYear !== todayYear || cMonth !== todayMonth) return false;
+      }
+
+      if (!q) return true;
+      const guestName = (record.guest_name || '').toLowerCase();
+      const phone = (record.phone_number || '').toString().toLowerCase();
+      const room = (record.room_number || '').toString();
+      const aadhaar = (record.aadhaar_number || '').toString().toLowerCase();
+
+      return guestName.includes(q) || phone.includes(q) || room.includes(q) || aadhaar.includes(q);
+    });
+  }, [records, viewDeleted, activeFilter, searchQuery]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A';
@@ -237,18 +246,37 @@ const Records = () => {
             className="w-full max-w-md flex flex-col gap-4 max-h-full overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {viewerImages.map((url, idx) => (
-              <div key={url} className="flex flex-col gap-1.5">
-                <span className="text-white text-[13px] font-bold">
-                  {viewerImages.length > 1 ? (idx === 0 ? 'Front' : 'Back') : 'Aadhaar'}
-                </span>
-                <img
-                  src={url}
-                  alt={idx === 0 ? 'Aadhaar Front' : 'Aadhaar Back'}
-                  className="w-full rounded-[14px] border border-white/20"
-                />
-              </div>
-            ))}
+            {viewerImages.map((url, idx) => {
+              let label = 'Aadhaar Card';
+              if (url.includes('p1_front_') || url.includes('p1_front')) {
+                label = 'Person 1 - Front';
+              } else if (url.includes('p1_back_') || url.includes('p1_back')) {
+                label = 'Person 1 - Back';
+              } else if (url.includes('p2_front_') || url.includes('p2_front')) {
+                label = 'Person 2 - Front';
+              } else if (url.includes('p2_back_') || url.includes('p2_back')) {
+                label = 'Person 2 - Back';
+              } else if (viewerImages.length === 2) {
+                label = idx === 0 ? 'Person 1 - Front' : 'Person 1 - Back';
+              } else if (viewerImages.length > 2) {
+                const person = Math.floor(idx / 2) + 1;
+                const side = idx % 2 === 0 ? 'Front' : 'Back';
+                label = `Person ${person} - ${side}`;
+              }
+
+              return (
+                <div key={url} className="flex flex-col gap-1.5">
+                  <span className="text-white text-[13px] font-bold">
+                    {label}
+                  </span>
+                  <img
+                    src={url}
+                    alt={label}
+                    className="w-full rounded-[14px] border border-white/20"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

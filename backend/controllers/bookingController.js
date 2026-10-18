@@ -4,28 +4,76 @@ const { ROOMS } = require('../config/rooms');
 
 const SIGNED_URL_TTL_SECONDS = 60 * 60; // 1 hour
 
-// aadhaar_image is stored as a private-bucket file path. Resolve it to a
-// short-lived signed URL on the way out so the raw path is never public.
-// Also handles legacy rows that still hold a full public URL from before
-// the bucket was made private.
+// In-memory cache for resolved signed URLs: path -> { url, expiresAt }
+// Avoids repeated remote Supabase Storage calls on every request.
+const signedUrlCache = new Map();
+
+function cleanAadhaarPath(rawPath) {
+  if (!rawPath) return '';
+  return rawPath.includes('/aadhaar-images/')
+    ? rawPath.split('/aadhaar-images/').pop()
+    : rawPath;
+}
+
+async function batchResolveAadhaarImages(bookings) {
+  if (!Array.isArray(bookings) || bookings.length === 0) return bookings;
+
+  const now = Date.now();
+  const pathsToFetch = new Set();
+
+  // Find all unique uncached paths
+  for (const b of bookings) {
+    if (!b?.aadhaar_image) continue;
+    const paths = b.aadhaar_image.split(',').map(s => s.trim()).filter(Boolean);
+    for (const raw of paths) {
+      const p = cleanAadhaarPath(raw);
+      const cached = signedUrlCache.get(p);
+      if (!cached || cached.expiresAt <= now) {
+        pathsToFetch.add(p);
+      }
+    }
+  }
+
+  // Batch fetch any missing paths in a single call to Supabase
+  if (pathsToFetch.size > 0) {
+    try {
+      const pathArray = Array.from(pathsToFetch);
+      const { data, error } = await supabase
+        .storage
+        .from('aadhaar-images')
+        .createSignedUrls(pathArray, SIGNED_URL_TTL_SECONDS);
+
+      if (!error && Array.isArray(data)) {
+        // Cache for 55 minutes (leaving 5 minutes safety buffer before 1-hr TTL)
+        const expiresAt = now + (SIGNED_URL_TTL_SECONDS - 300) * 1000;
+        for (const item of data) {
+          if (item?.signedUrl) {
+            signedUrlCache.set(item.path, { url: item.signedUrl, expiresAt });
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Batch signed URL generation failed:', err.message);
+    }
+  }
+
+  // Map resolved URLs back onto bookings
+  return bookings.map(b => {
+    if (!b?.aadhaar_image) return b;
+    const paths = b.aadhaar_image.split(',').map(s => s.trim()).filter(Boolean);
+    const resolvedUrls = paths.map(raw => {
+      const p = cleanAadhaarPath(raw);
+      return signedUrlCache.get(p)?.url || null;
+    }).filter(Boolean);
+
+    return { ...b, aadhaar_image: resolvedUrls.length > 0 ? resolvedUrls.join(',') : null };
+  });
+}
+
 async function resolveAadhaarImage(booking) {
-  if (!booking?.aadhaar_image) return booking;
-
-  const paths = booking.aadhaar_image.split(',');
-  const signedUrls = await Promise.all(paths.map(async (rawPath) => {
-    const path = rawPath.includes('/aadhaar-images/')
-      ? rawPath.split('/aadhaar-images/').pop()
-      : rawPath;
-
-    const { data, error } = await supabase
-      .storage
-      .from('aadhaar-images')
-      .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
-
-    return error ? null : data.signedUrl;
-  }));
-
-  return { ...booking, aadhaar_image: signedUrls.filter(Boolean).join(',') || null };
+  if (!booking) return booking;
+  const [resolved] = await batchResolveAadhaarImages([booking]);
+  return resolved;
 }
 
 exports.createBooking = async (req, res) => {
@@ -74,8 +122,14 @@ exports.createBooking = async (req, res) => {
     if (req.files && req.files.length > 0) {
       const uploadedFiles = [];
       for (const file of req.files) {
-        const fileExt = file.originalname.split('.').pop();
-        const fileName = `${uuidv4()}.${fileExt}`;
+        const fileExt = file.originalname.split('.').pop() || 'jpg';
+        let prefix = '';
+        if (file.originalname.startsWith('p1_front_') || file.fieldname === 'p1_front') prefix = 'p1_front_';
+        else if (file.originalname.startsWith('p1_back_') || file.fieldname === 'p1_back') prefix = 'p1_back_';
+        else if (file.originalname.startsWith('p2_front_') || file.fieldname === 'p2_front') prefix = 'p2_front_';
+        else if (file.originalname.startsWith('p2_back_') || file.fieldname === 'p2_back') prefix = 'p2_back_';
+
+        const fileName = `${prefix}${uuidv4()}.${fileExt}`;
         const { error: uploadError } = await supabase
           .storage
           .from('aadhaar-images')
@@ -126,7 +180,7 @@ exports.getAllBookings = async (req, res) => {
 
     if (error) throw error;
 
-    res.status(200).json(await Promise.all(bookings.map(resolveAadhaarImage)));
+    res.status(200).json(await batchResolveAadhaarImages(bookings || []));
   } catch (error) {
     res.status(500).json({ message: 'Error fetching bookings', error: error.message });
   }

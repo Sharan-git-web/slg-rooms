@@ -15,6 +15,17 @@ export const revenueService = {
     const response = await api.get('/revenue/monthly');
     return response.data;
   },
+
+  getTrends: async (timeframe = '7days') => {
+    const response = await api.get(`/revenue/trends?timeframe=${timeframe}`);
+    return response.data;
+  },
+
+  getDailyWithDate: async (date = '') => {
+    const url = date ? `/revenue/daily?date=${date}` : '/revenue/daily';
+    const response = await api.get(url);
+    return response.data;
+  },
   
   getRevenueDashboard: async (timeframe = '7days', selectedDate = '') => {
     try {

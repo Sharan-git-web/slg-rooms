@@ -5,7 +5,7 @@ exports.getRoomAvailability = async (req, res) => {
   try {
     const { data: bookings, error } = await supabase
       .from('bookings')
-      .select('*')
+      .select('id, room_number, check_in, check_out, members')
       .neq('status', 'deleted')
       .order('check_in', { ascending: false });
 

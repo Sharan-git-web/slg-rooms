@@ -6,6 +6,7 @@ import Input from '../components/Common/Input';
 import Button from '../components/Common/Button';
 import CameraCapture from '../components/Common/CameraCapture';
 import { Loader2, CircleCheck, Save } from 'lucide-react';
+import { compressImage } from '../utils/imageCompressor';
 
 const Booking = () => {
   const location = useLocation();
@@ -21,8 +22,14 @@ const Booking = () => {
     cost: ''
   });
   
+  // Person 1 ID Card
   const [cameraImageFront, setCameraImageFront] = useState(null);
   const [cameraImageBack, setCameraImageBack] = useState(null);
+
+  // Person 2 ID Card
+  const [person2ImageFront, setPerson2ImageFront] = useState(null);
+  const [person2ImageBack, setPerson2ImageBack] = useState(null);
+
   const [availableRooms, setAvailableRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -51,14 +58,36 @@ const Booking = () => {
     }));
   };
 
-  const handleCameraCaptureFront = (e) => {
+  const handleP1CaptureFront = async (e) => {
     const file = e.target.files?.[0];
-    if (file) setCameraImageFront(file);
+    if (file) {
+      const compressed = await compressImage(file);
+      setCameraImageFront(compressed);
+    }
   };
 
-  const handleCameraCaptureBack = (e) => {
+  const handleP1CaptureBack = async (e) => {
     const file = e.target.files?.[0];
-    if (file) setCameraImageBack(file);
+    if (file) {
+      const compressed = await compressImage(file);
+      setCameraImageBack(compressed);
+    }
+  };
+
+  const handleP2CaptureFront = async (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const compressed = await compressImage(file);
+      setPerson2ImageFront(compressed);
+    }
+  };
+
+  const handleP2CaptureBack = async (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const compressed = await compressImage(file);
+      setPerson2ImageBack(compressed);
+    }
   };
 
   const handleClear = () => {
@@ -74,6 +103,8 @@ const Booking = () => {
     });
     setCameraImageFront(null);
     setCameraImageBack(null);
+    setPerson2ImageFront(null);
+    setPerson2ImageBack(null);
     setError(null);
     setSuccess(false);
   };
@@ -85,8 +116,10 @@ const Booking = () => {
     setSuccess(false);
     
     try {
+      const hasAnyImage = cameraImageFront || cameraImageBack || person2ImageFront || person2ImageBack;
       let dataToSubmit = formData;
-      if (cameraImageFront || cameraImageBack) {
+
+      if (hasAnyImage) {
         const fd = new FormData();
         fd.append('room_number', formData.roomNumber);
         fd.append('members', formData.totalMembers);
@@ -96,8 +129,19 @@ const Booking = () => {
         fd.append('cost', formData.cost);
         fd.append('guest_name', formData.guestName);
         fd.append('phone_number', formData.phoneNumber);
-        if (cameraImageFront) fd.append('aadhaar_images', cameraImageFront);
-        if (cameraImageBack) fd.append('aadhaar_images', cameraImageBack);
+
+        if (cameraImageFront) {
+          fd.append('aadhaar_images', cameraImageFront, `p1_front_${cameraImageFront.name || 'front.jpg'}`);
+        }
+        if (cameraImageBack) {
+          fd.append('aadhaar_images', cameraImageBack, `p1_back_${cameraImageBack.name || 'back.jpg'}`);
+        }
+        if (person2ImageFront) {
+          fd.append('aadhaar_images', person2ImageFront, `p2_front_${person2ImageFront.name || 'front.jpg'}`);
+        }
+        if (person2ImageBack) {
+          fd.append('aadhaar_images', person2ImageBack, `p2_back_${person2ImageBack.name || 'back.jpg'}`);
+        }
         dataToSubmit = fd;
       } else {
         dataToSubmit = {
@@ -185,9 +229,60 @@ const Booking = () => {
           onChange={handleChange} placeholder="98765 43210" type="tel" required 
         />
         
-        <div className="grid grid-cols-2 gap-gutter">
-          <CameraCapture onCapture={handleCameraCaptureFront} hasImage={!!cameraImageFront} label="Front Image" />
-          <CameraCapture onCapture={handleCameraCaptureBack} hasImage={!!cameraImageBack} label="Back Image" />
+        {/* Person 1 ID Card */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between ml-1">
+            <label className="text-[13px] font-bold text-[#1B1B1F] tracking-wide">
+              Person 1 - ID Card *
+            </label>
+            <span className="text-[11px] font-semibold text-[#16A34A] bg-[#E8F6EC] px-2 py-0.5 rounded-full">
+              Primary Guest
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-gutter">
+            <CameraCapture
+              onCapture={handleP1CaptureFront}
+              onClear={() => setCameraImageFront(null)}
+              image={cameraImageFront}
+              hasImage={!!cameraImageFront}
+              label="Front Image"
+            />
+            <CameraCapture
+              onCapture={handleP1CaptureBack}
+              onClear={() => setCameraImageBack(null)}
+              image={cameraImageBack}
+              hasImage={!!cameraImageBack}
+              label="Back Image"
+            />
+          </div>
+        </div>
+
+        {/* Person 2 ID Card */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between ml-1">
+            <label className="text-[13px] font-bold text-[#1B1B1F] tracking-wide">
+              Person 2 - ID Card
+            </label>
+            <span className="text-[11px] font-medium text-[#6B6B70] bg-[#FAF9F7] border border-[#EFEBE8] px-2 py-0.5 rounded-full">
+              Second Guest (Optional)
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-gutter">
+            <CameraCapture
+              onCapture={handleP2CaptureFront}
+              onClear={() => setPerson2ImageFront(null)}
+              image={person2ImageFront}
+              hasImage={!!person2ImageFront}
+              label="Front Image"
+            />
+            <CameraCapture
+              onCapture={handleP2CaptureBack}
+              onClear={() => setPerson2ImageBack(null)}
+              image={person2ImageBack}
+              hasImage={!!person2ImageBack}
+              label="Back Image"
+            />
+          </div>
         </div>
         
         <div className="space-y-4">

@@ -37,19 +37,40 @@ const Home = () => {
   }, []);
 
   const handleCheckout = async (bookingId) => {
+    const previousRooms = rooms;
+    const previousStats = stats;
+
+    // Optimistically update the room to Available immediately
+    setRooms(prev => prev.map(r => r.bookingId === bookingId ? {
+      ...r,
+      status: 'Available',
+      isReady: true,
+      showAssign: true,
+      members: 'Vacant',
+      checkIn: null,
+      checkOut: null
+    } : r));
+
+    setStats(prev => prev ? {
+      ...prev,
+      occupied: Math.max(0, prev.occupied - 1),
+      available: prev.available + 1
+    } : prev);
+
     try {
-      setLoading(true);
       await bookingService.updateBooking(bookingId, { check_out: new Date().toISOString() });
+      // Silently sync server stats in background
       const [statsData, roomsData] = await Promise.all([
         dashboardService.getDashboardStats(),
         roomService.getRoomAvailability()
       ]);
-      setStats(statsData || { occupied: 0, available: 0, checkIns: 0, revenue: 0 });
-      setRooms(roomsData?.rooms || []);
+      if (statsData) setStats(statsData);
+      if (roomsData?.rooms) setRooms(roomsData.rooms);
     } catch (err) {
+      // Revert on failure
+      setRooms(previousRooms);
+      setStats(previousStats);
       setError("Failed to checkout. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 

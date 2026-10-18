@@ -3,8 +3,8 @@ const router = express.Router();
 const bookingController = require('../controllers/bookingController');
 const upload = require('../middleware/uploadMiddleware');
 
-// Booking routes
-router.post('/', upload.array('aadhaar_images', 2), bookingController.createBooking);
+// Booking routes - upload.any() allows multiple Aadhaar card images (front and back for Person 1 & Person 2)
+router.post('/', upload.any(), bookingController.createBooking);
 router.get('/', bookingController.getAllBookings);
 router.get('/:id', bookingController.getBookingById);
 router.put('/:id', bookingController.updateBooking);

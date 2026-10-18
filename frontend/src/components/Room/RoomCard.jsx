@@ -81,4 +81,4 @@ const RoomCard = ({ number, type, status, checkIn, checkOut, members, isReady, s
   );
 };
 
-export default RoomCard;
+export default React.memo(RoomCard);
