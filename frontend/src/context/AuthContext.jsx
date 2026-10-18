@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { authService } from '../services/authService';
+import { clearApiCache } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -13,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
+    clearApiCache();
     localStorage.removeItem('slg_token');
     setToken(null);
   }, []);

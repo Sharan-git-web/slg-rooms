@@ -1,5 +1,5 @@
 const supabase = require('../config/supabase');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID: uuidv4 } = require('node:crypto');
 const { ROOMS } = require('../config/rooms');
 
 const SIGNED_URL_TTL_SECONDS = 60 * 60; // 1 hour
