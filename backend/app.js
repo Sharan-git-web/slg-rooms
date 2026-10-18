@@ -13,8 +13,13 @@ const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173,http:
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (curl, server-to-server) which send no Origin header.
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow non-browser requests (curl, server-to-server) which send no Origin header,
+    // explicitly configured origins, and any slg-rooms Vercel deployment domain.
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/slg-rooms.*\.vercel\.app$/.test(origin)
+    ) {
       callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not allowed by CORS`));
