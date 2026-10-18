@@ -11,27 +11,29 @@ const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173,http:
   .split(',')
   .map(origin => origin.trim());
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
-    // Allow non-browser requests (curl, server-to-server) which send no Origin header,
-    // explicitly configured origins, and any slg-rooms Vercel deployment domain.
     if (
       !origin ||
       allowedOrigins.includes(origin) ||
-      /^https:\/\/slg-rooms.*\.vercel\.app$/.test(origin)
+      /\.vercel\.app$/.test(origin)
     ) {
       callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not allowed by CORS`));
     }
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Simple Route for testing
-app.get('/api/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running' });
 });
 
@@ -43,12 +45,11 @@ const roomRoutes = require('./routes/roomRoutes');
 const revenueRoutes = require('./routes/revenueRoutes');
 const requireAuth = require('./middleware/authMiddleware');
 
-app.use('/api/auth', authRoutes);
-
-app.use('/api/bookings', requireAuth, bookingRoutes);
-app.use('/api/dashboard', requireAuth, dashboardRoutes);
-app.use('/api/rooms', requireAuth, roomRoutes);
-app.use('/api/revenue', requireAuth, revenueRoutes);
+app.use(['/auth', '/api/auth'], authRoutes);
+app.use(['/bookings', '/api/bookings'], requireAuth, bookingRoutes);
+app.use(['/dashboard', '/api/dashboard'], requireAuth, dashboardRoutes);
+app.use(['/rooms', '/api/rooms'], requireAuth, roomRoutes);
+app.use(['/revenue', '/api/revenue'], requireAuth, revenueRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
