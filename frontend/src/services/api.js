@@ -1,7 +1,19 @@
 import axios from 'axios';
 
+let resolvedBaseURL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://slg-rooms.onrender.com/api' : 'http://localhost:5001/api');
+
+// If VITE_API_URL was set to the defunct slg-rooms-o35e URL, point to the live Render backend
+if (resolvedBaseURL.includes('slg-rooms-o35e')) {
+  resolvedBaseURL = 'https://slg-rooms.onrender.com/api';
+}
+
+// Ensure baseURL ends with /api
+if (!resolvedBaseURL.endsWith('/api') && !resolvedBaseURL.endsWith('/api/')) {
+  resolvedBaseURL = resolvedBaseURL.replace(/\/+$/, '') + '/api';
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5001/api')
+  baseURL: resolvedBaseURL
 });
 
 // Attach the logged-in session token to every request.
